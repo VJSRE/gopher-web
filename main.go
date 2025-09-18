@@ -16,6 +16,7 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
 func pathHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/":
@@ -23,12 +24,26 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 	case "/contact":
 		contactHandler(w, r)
 	default:
-		http.NotFound(w, r)
+		http.Error(w, "Page Not Found", http.StatusNotFound)
 	}
-
 }
+*/
+
+type Router struct{}
+
+func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "/":
+		homeHandler(w, r)
+	case "/contact":
+		contactHandler(w, r)
+	default:
+		http.Error(w, "Page Not Found", http.StatusNotFound)
+	}
+}
+
 func main() {
-	http.HandleFunc("/", pathHandler)
+	var router Router
 	fmt.Println("Listening on port 8000")
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000", router)
 }
