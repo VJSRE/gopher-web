@@ -1,0 +1,29 @@
+package views
+
+import (
+	"fmt"
+	"html/template"
+	"net/http"
+)
+
+func Parse(filepath string) (Template, error) {
+	tpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		return Template{}, fmt.Errorf("Error parsing template: %w", err)
+	}
+	return Template{tpl}, nil
+}
+
+type Template struct {
+	htmlTpl *template.Template
+}
+
+func (t Template) Execute(w http.ResponseWriter, data interface{}) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	err := t.htmlTpl.Execute(w, nil)
+	if err != nil {
+		fmt.Printf("executing template: %v", err)
+		http.Error(w, "There is an error while executing the template", http.StatusInternalServerError)
+		return
+	}
+}
