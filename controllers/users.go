@@ -1,13 +1,12 @@
 package controllers
 
 import (
-	"github.com/VJSRE/lenslocked/views"
 	"net/http"
 )
 
 type Users struct {
 	Template struct {
-		New views.Template
+		New Template
 	}
 }
 
