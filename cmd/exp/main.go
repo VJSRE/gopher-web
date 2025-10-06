@@ -80,19 +80,54 @@ func main() {
 
 	*/
 
-	// Insert records into order tables.
+	/*
+		// Insert records into order tables.
+		userID := 1
+
+		for i := 1; i <= 5; i++ {
+			amount := i * 100
+			description := fmt.Sprintf("Fake order  %d", amount)
+			_, err := db.Exec(`
+			INSERT INTO orders (user_id, amount, description)
+			values ($1, $2, $3)`, userID, amount, description)
+
+			if err != nil {
+				panic(err)
+			}
+		}
+
+	*/
+
+	// Fetch data from Postgresql
+
+	type Order struct {
+		ID          int
+		userID      int
+		Amount      int
+		Description string
+	}
+
+	var orders []Order
 	userID := 1
+	rows, err := db.Query(`
+	SELECT id, amount, description FROM orders WHERE user_id=$1;`, userID)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
 
-	for i := 1; i <= 5; i++ {
-		amount := i * 100
-		description := fmt.Sprintf("Fake order  %d", amount)
-		_, err := db.Exec(`
-		INSERT INTO orders (user_id, amount, description)
-		values ($1, $2, $3)`, userID, amount, description)
-
+	for rows.Next() {
+		var order Order
+		order.userID = userID
+		err = rows.Scan(&order.ID, &order.Amount, &order.Description)
 		if err != nil {
 			panic(err)
 		}
+		orders = append(orders, order)
 	}
+	if rows.Err() != nil {
+		panic(err)
+	}
+	fmt.Println("Order details ", orders)
 
 }
