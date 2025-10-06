@@ -61,19 +61,38 @@ func main() {
 	}
 	fmt.Println("Tables are created")
 
-	name := "VJSRE"
-	email := "Vk@mykoneru.com"
+	/*
+		name := "VJSRE"
+		email := "Vk@mykoneru.com"
 
-	// Insert records
-	record := db.QueryRow(`
-		INSERT INTO users (name, email)
-		VALUES ($1,$2) RETURNING id; `, name, email)
+		// Insert records
+		record := db.QueryRow(`
+			INSERT INTO users (name, email)
+			VALUES ($1,$2) RETURNING id; `, name, email)
 
-	var id int
-	err = record.Scan(&id)
-	if err != nil {
-		panic(err)
+		var id int
+		err = record.Scan(&id)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Record got inserted into the users table; id=", id)
+
+
+	*/
+
+	// Insert records into order tables.
+	userID := 1
+
+	for i := 1; i <= 5; i++ {
+		amount := i * 100
+		description := fmt.Sprintf("Fake order  %d", amount)
+		_, err := db.Exec(`
+		INSERT INTO orders (user_id, amount, description)
+		values ($1, $2, $3)`, userID, amount, description)
+
+		if err != nil {
+			panic(err)
+		}
 	}
-	fmt.Println("Record got inserted into the users table; id=", id)
 
 }
