@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/VJSRE/lenslocked/controllers"
+	"github.com/VJSRE/lenslocked/models"
 	"github.com/VJSRE/lenslocked/templates"
 	"github.com/VJSRE/lenslocked/views"
 	"github.com/go-chi/chi/v5"
@@ -31,10 +32,26 @@ func main() {
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))
 
-	var usersC controllers.Users
+	cfg := models.DefaultPostgresConfig()
+	db, err := models.Open(cfg)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	userService := models.UserService{
+		DB: db,
+	}
+
+	usersC := controllers.Users{
+		UserService: &userService,
+	}
 	usersC.Template.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
+	usersC.Template.SignIn = views.Must(views.ParseFS(templates.FS, "signin.gohtml", "tailwind.gohtml"))
 	r.Get("/signup", usersC.New)
 	r.Post("/signup", usersC.Create)
+	r.Get("/signin", usersC.SignIn)
+	r.Post("/signin", usersC.ProcessSignIn)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 page not found", http.StatusNotFound)
