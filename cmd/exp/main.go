@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/VJSRE/lenslocked/models"
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
@@ -20,15 +21,7 @@ func (conf PostgresConfig) Connect() string {
 }
 
 func main() {
-	dbConfig := PostgresConfig{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     "baloo",
-		Password: "junglebook",
-		Database: "lenslocked",
-		SSLMode:  "disable",
-	}
-
+	dbConfig := models.DefaultPostgresConfig()
 	db, err := sql.Open("pgx", dbConfig.Connect())
 	if err != nil {
 		panic(err)
@@ -98,36 +91,37 @@ func main() {
 
 	*/
 
-	// Fetch data from Postgresql
+	/*
+		// Fetch data from Postgresql
 
-	type Order struct {
-		ID          int
-		userID      int
-		Amount      int
-		Description string
-	}
+		type Order struct {
+			ID          int
+			userID      int
+			Amount      int
+			Description string
+		}
 
-	var orders []Order
-	userID := 1
-	rows, err := db.Query(`
-	SELECT id, amount, description FROM orders WHERE user_id=$1;`, userID)
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var order Order
-		order.userID = userID
-		err = rows.Scan(&order.ID, &order.Amount, &order.Description)
+		var orders []Order
+		userID := 1
+		rows, err := db.Query(`
+		SELECT id, amount, description FROM orders WHERE user_id=$1;`, userID)
 		if err != nil {
 			panic(err)
 		}
-		orders = append(orders, order)
-	}
-	if rows.Err() != nil {
-		panic(err)
-	}
-	fmt.Println("Order details ", orders)
+		defer rows.Close()
 
+		for rows.Next() {
+			var order Order
+			order.userID = userID
+			err = rows.Scan(&order.ID, &order.Amount, &order.Description)
+			if err != nil {
+				panic(err)
+			}
+			orders = append(orders, order)
+		}
+		if rows.Err() != nil {
+			panic(err)
+		}
+		fmt.Println("Order details ", orders)
+	*/
 }
