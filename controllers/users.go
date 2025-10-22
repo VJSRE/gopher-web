@@ -15,7 +15,7 @@ type Users struct {
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
-	u.Template.New.Execute(w, nil)
+	u.Template.New.Execute(w, r, nil)
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Template.SignIn.Execute(w, data)
+	u.Template.SignIn.Execute(w, r, data)
 }
 
 func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
